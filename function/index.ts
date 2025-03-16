@@ -1,4 +1,4 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { APIGatewayEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { chatUtils } from './gpt';
 
 const systemPrompt = `
@@ -38,32 +38,10 @@ const systemPrompt = `
 한국어에서 존댓말은 사용하지마.
 `
 
-export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  // OPTIONS 요청 처리 추가
-  if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "OPTIONS,POST,GET,PUT,PATCH,DELETE",
-        "Access-Control-Allow-Credentials": true,
-        "Content-Type": "application/json"
-      },
-      body: ''
-    };
-  }
-
+export const handler = async (event: APIGatewayEvent): Promise<APIGatewayProxyResult> => {
   try {
-    if (event.httpMethod !== 'POST') {
-      return {
-        statusCode: 405,
-        body: JSON.stringify({
-          message: 'HTTP POST 메소드만 지원됩니다.'
-        })
-      };
-    }
-
+    console.log({ event });
+    
     const body = event.body ? JSON.parse(event.body) : {};
     console.log(body);
     const { message } = body;
@@ -88,7 +66,6 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "OPTIONS,POST,GET,PUT,PATCH,DELETE",
-        "Access-Control-Allow-Credentials": true,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
